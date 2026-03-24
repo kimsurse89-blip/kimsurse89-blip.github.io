@@ -281,12 +281,27 @@
       }
     }
 
-    .video-box video{
+    .video-box .promo-layer{
+      position:absolute;
+      inset:0;
       width:100%;
       height:100%;
       display:block;
       object-fit:cover;
       background:#000;
+      opacity:0;
+      transition: opacity .7s ease;
+      pointer-events:none;
+    }
+
+    .video-box .promo-layer.active{
+      opacity:1;
+      pointer-events:auto;
+      z-index:2;
+    }
+
+    .video-box .promo-layer.preload{
+      z-index:1;
     }
 
     .media{
@@ -516,16 +531,25 @@
           <p class="section-title">플레이 영상</p>
           <div class="video-box">
             <video
-              id="promoVideo"
+              id="promoVideoA"
+              class="promo-layer active"
               playsinline
               muted
               autoplay
               controls
               preload="auto"
               poster="hero.jpg"
-            >
-              <source src="promo.mp4" type="video/mp4" />
-            </video>
+            ></video>
+            <video
+              id="promoVideoB"
+              class="promo-layer preload"
+              playsinline
+              muted
+              autoplay
+              controls
+              preload="auto"
+              poster="hero.jpg"
+            ></video>
           </div>
         </div>
       </section>
@@ -678,10 +702,13 @@
   document.getElementById("sourcePill").textContent = src;
 
   const videoSection = document.getElementById("videoSection");
-  const promoVideo = document.getElementById("promoVideo");
+  const promoVideoA = document.getElementById("promoVideoA");
+  const promoVideoB = document.getElementById("promoVideoB");
   const videoFiles = (CONFIG.videoFiles || []).filter(Boolean);
   let videoIdx = 0;
   let videoTimer = null;
+  let activePromo = promoVideoA;
+  let hiddenPromo = promoVideoB;
 
   function stopVideoRotation() {
     if (videoTimer) {
@@ -690,43 +717,110 @@
     }
   }
 
-  function setPromoVideo(i) {
-    if (!promoVideo || videoFiles.length === 0) return;
+  function setupPromoVideo(videoEl, src) {
+    if (!videoEl || !src) return Promise.reject(new Error("missing video or src"));
 
-    videoIdx = (i + videoFiles.length) % videoFiles.length;
+    return new Promise((resolve, reject) => {
+      let finished = false;
 
-    const sourceEl = promoVideo.querySelector("source");
-    if (!sourceEl) return;
+      const cleanup = () => {
+        videoEl.removeEventListener("canplay", onReady);
+        videoEl.removeEventListener("loadeddata", onReady);
+        videoEl.removeEventListener("error", onError);
+      };
 
-    sourceEl.src = videoFiles[videoIdx];
-    promoVideo.load();
-    promoVideo.play().catch(() => {});
+      const done = (fn) => {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        fn();
+      };
+
+      const onReady = () => {
+        videoEl.currentTime = 0;
+        videoEl.play().then(() => done(resolve)).catch(() => done(resolve));
+      };
+
+      const onError = () => done(() => reject(new Error(`failed to load ${src}`)));
+
+      videoEl.loop = true;
+      videoEl.muted = true;
+      videoEl.playsInline = true;
+      videoEl.autoplay = true;
+      videoEl.preload = "auto";
+      videoEl.src = src;
+
+      videoEl.addEventListener("canplay", onReady, { once: true });
+      videoEl.addEventListener("loadeddata", onReady, { once: true });
+      videoEl.addEventListener("error", onError, { once: true });
+      videoEl.load();
+
+      if (videoEl.readyState >= 3) {
+        onReady();
+      }
+    });
+  }
+
+  function syncVideoUi() {
+    if (!activePromo || !hiddenPromo) return;
+    activePromo.classList.add("active");
+    hiddenPromo.classList.remove("active");
+    hiddenPromo.classList.add("preload");
+    activePromo.classList.remove("preload");
+    activePromo.controls = true;
+    hiddenPromo.controls = false;
+  }
+
+  async function initPromoVideos() {
+    if (!videoSection || !promoVideoA || !promoVideoB || videoFiles.length === 0) return;
+
+    try {
+      await setupPromoVideo(activePromo, videoFiles[0]);
+      syncVideoUi();
+      startVideoRotation();
+    } catch {
+      videoSection.style.display = "none";
+    }
+  }
+
+  async function crossfadeToVideo(nextIndex) {
+    if (!activePromo || !hiddenPromo || videoFiles.length <= 1) return;
+
+    const normalizedIndex = (nextIndex + videoFiles.length) % videoFiles.length;
+    const nextSrc = videoFiles[normalizedIndex];
+
+    try {
+      await setupPromoVideo(hiddenPromo, nextSrc);
+
+      hiddenPromo.classList.add("active");
+      hiddenPromo.classList.remove("preload");
+      hiddenPromo.controls = true;
+
+      activePromo.classList.remove("active");
+      activePromo.classList.add("preload");
+      activePromo.controls = false;
+
+      const previousActive = activePromo;
+      activePromo = hiddenPromo;
+      hiddenPromo = previousActive;
+      videoIdx = normalizedIndex;
+      syncVideoUi();
+    } catch {
+      // Keep the current video visible if the next file fails to load.
+    }
   }
 
   function startVideoRotation() {
     stopVideoRotation();
 
-    if (!promoVideo || videoFiles.length <= 1 || !CONFIG.videoRotateMs || CONFIG.videoRotateMs <= 0) return;
+    if (!activePromo || !hiddenPromo || videoFiles.length <= 1 || !CONFIG.videoRotateMs || CONFIG.videoRotateMs <= 0) return;
 
     videoTimer = setInterval(() => {
-      setPromoVideo(videoIdx + 1);
+      crossfadeToVideo(videoIdx + 1);
     }, CONFIG.videoRotateMs);
   }
 
-  if (promoVideo) {
-    promoVideo.addEventListener("error", () => {
-      if (videoSection) videoSection.style.display = "none";
-    });
-
-    promoVideo.addEventListener("loadedmetadata", () => {
-      promoVideo.play().catch(() => {});
-    });
-
-    if (videoFiles.length > 0) {
-      setPromoVideo(0);
-      startVideoRotation();
-    }
-  }
+  initPromoVideos();
 
   const slider = document.getElementById("slider");
   const dotsWrap = document.getElementById("dots");
@@ -822,4 +916,3 @@
 </script>
 </body>
 </html>
-
