@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f17" />
+
+  <title>픽셀 드래곤 - 알에서 궁극체까지</title>
+  <meta name="description" content="픽셀 감성 드래곤을 알부터 성장·진화시키는 방치형 육성 게임. 지금 바로 시작하세요." />
+  <meta property="og:title" content="픽셀 드래곤 - 알에서 궁극체까지" />
+  <meta property="og:description" content="픽셀 감성 드래곤을 알부터 성장·진화시키는 방치형 육성 게임. 지금 바로 시작하세요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="logo.png" />
+
+  <link rel="icon" href="logo.png" />
+
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --card:#111827;
+      --muted:#93a4b8;
+      --text:#e8eef7;
+      --ring: rgba(96,165,250,.35);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --max: 980px;
+      --pad: 18px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(96,165,250,.16), transparent 55%),
+        radial-gradient(800px 500px at 80% 20%, rgba(74,222,128,.12), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(251,113,133,.10), transparent 55%),
+        var(--bg);
+      line-height:1.45;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{min-height:100%; display:flex; flex-direction:column}
+    .topbar{
+      padding: 14px var(--pad);
+      display:flex;
+      justify-content:center;
+    }
+    .topbar-inner{
+      width:min(var(--max), calc(100% - 2*var(--pad)));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .logo-img{
+      width:38px;
+      height:38px;
+      border-radius:10px;
+      object-fit:cover;
+      display:block;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+    .brand-text strong{
+      font-size:15px;
+    }
+    .brand-text span{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .pill{
+      font-size:12px;
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:999px;
+      color:var(--muted);
+      background: rgba(17,24,39,.5);
+      backdrop-filter: blur(8px);
+      white-space:nowrap;
+    }
+
+    main{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      padding: 10px var(--pad) 26px;
+    }
+    .container{
+      width:min(var(--max), calc(100% - 2*var(--pad)));
+      display:grid;
+      gap:16px;
+      grid-template-columns: 1.1fr .9fr;
+      align-items:stretch;
+    }
+    @media (max-width: 860px){
+      .container{grid-template-columns:1fr}
+    }
+
+    .card{
+      background: rgba(17,24,39,.7);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 40%);
+      pointer-events:none;
+    }
+
+    .hero{ padding: 22px 22px 18px; }
+    .kicker{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      color: var(--muted);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(11,15,23,.35);
+      padding: 7px 10px;
+      border-radius:999px;
+      margin-bottom: 12px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(26px, 4.1vw, 40px);
+      line-height:1.12;
+      letter-spacing:-.4px;
+    }
+    .sub{
+      margin:0 0 16px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .cta-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(11,15,23,.35);
+      color: var(--text);
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease, background .12s ease;
+      user-select:none;
+      min-width: 170px;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(96,165,250,.45);
+      box-shadow: 0 0 0 6px var(--ring);
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(96,165,250,.95), rgba(74,222,128,.95));
+      color:#07101a;
+      border-color: rgba(255,255,255,.18);
+    }
+    .btn.primary:hover{
+      border-color: rgba(255,255,255,.26);
+      box-shadow: 0 0 0 6px rgba(74,222,128,.22);
+    }
+    .btn .small{
+      font-size:12px;
+      font-weight:700;
+      opacity:.9;
+    }
+
+    .badges{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .badge{
+      font-size:12px;
+      color: var(--muted);
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(11,15,23,.25);
+    }
+
+    .features{
+      padding: 18px 22px 22px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 560px){
+      .features{grid-template-columns:1fr}
+    }
+    .feat{
+      padding: 14px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(11,15,23,.25);
+    }
+    .feat .t{
+      font-weight: 900;
+      margin:0 0 6px;
+      font-size:14px;
+    }
+    .feat .d{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
+    }
+
+    .side{
+      padding: 22px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .media{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(135deg, rgba(96,165,250,.12), rgba(74,222,128,.10)),
+        rgba(11,15,23,.25);
+      aspect-ratio: 16/10;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .slider{ position:absolute; inset:0; }
+    .slider img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      opacity:0;
+      transition: opacity .35s ease;
+    }
+    .slider img.active{ opacity:1; }
+
+    .slider-nav{
+      position:absolute;
+      left:10px;
+      right:10px;
+      bottom:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .nav-btn{
+      pointer-events:auto;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(11,15,23,.45);
+      backdrop-filter: blur(6px);
+      color: var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .nav-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(96,165,250,.45);
+      box-shadow: 0 0 0 6px var(--ring);
+    }
+    .dots{
+      pointer-events:auto;
+      display:flex;
+      gap:6px;
+      align-items:center;
+      justify-content:center;
+      flex:1;
+      margin:0 10px;
+    }
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.08);
+      cursor:pointer;
+      padding:0;
+    }
+    .dot.active{
+      background: rgba(255,255,255,.75);
+      border-color: rgba(255,255,255,.65);
+    }
+
+    .media .fallback{
+      text-align:center;
+      padding: 16px;
+      color: var(--muted);
+      font-size:13px;
+      z-index:2;
+    }
+    .media .fallback strong{color:var(--text)}
+    .media .hint{
+      display:inline-block;
+      margin-top: 8px;
+      font-size:12px;
+      opacity:.9;
+      border:1px dashed rgba(255,255,255,.20);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .mini{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .stat{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(11,15,23,.25);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .stat .k{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+    .stat .v{
+      font-weight: 950;
+      font-size:16px;
+      letter-spacing:-.2px;
+    }
+    .fine{
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.5;
+      padding-top: 8px;
+    }
+
+    footer{
+      padding: 16px var(--pad) 22px;
+      display:flex;
+      justify-content:center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    footer .f{
+      width:min(var(--max), calc(100% - 2*var(--pad)));
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    footer a{opacity:.9}
+    footer a:hover{
+      opacity:1;
+      text-decoration:underline;
+    }
+    .sep{opacity:.35}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand" aria-label="브랜드">
+        <img class="logo-img" src="logo.png" alt="픽셀 드래곤 로고" />
+        <div class="brand-text">
+          <strong>픽셀 드래곤</strong>
+          <span>PIXEL DRAGON</span>
+        </div>
+      </div>
+      <div class="pill" id="sourcePill">광고 방문</div>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <div class="hero">
+          <div class="kicker">🟩 방치형 육성 · 🟦 픽셀 감성 · 🟥 진화의 재미</div>
+          <h1>픽셀 드래곤<br />: PIXEL DRAGON</h1>
+          <p class="sub">
+            짧게 접속해도 성장하는 드래곤.
+            수집, 성장, 진화의 순간을 가볍게 즐겨보세요.
+          </p>
+
+          <div class="cta-row">
+            <a class="btn primary" id="ctaGooglePlay" href="#" rel="nofollow noopener">
+              <span>지금 설치하기</span>
+              <span class="small">Google Play</span>
+            </a>
+
+            <a class="btn" id="ctaAppStore" href="#" rel="nofollow noopener">
+              <span>iPhone 설치</span>
+              <span class="small">App Store</span>
+            </a>
+
+            <a class="btn" id="ctaMore" href="#features">
+              <span>더 알아보기</span>
+              <span class="small">기능 보기</span>
+            </a>
+          </div>
+
+          <div class="badges" aria-label="핵심 포인트">
+            <span class="badge">✅ 간단 조작</span>
+            <span class="badge">✅ 꾸준한 성장</span>
+            <span class="badge">✅ 레트로 도트</span>
+            <span class="badge">✅ 무료로 시작</span>
+          </div>
+        </div>
+
+        <div class="features" id="features">
+          <div class="feat">
+            <p class="t">알 → 성장 → 진화</p>
+            <p class="d">키우는 재미가 확실한 단계 성장 시스템.</p>
+          </div>
+          <div class="feat">
+            <p class="t">픽셀 감성 그래픽</p>
+            <p class="d">레트로 도트 분위기로 가볍게 몰입.</p>
+          </div>
+          <div class="feat">
+            <p class="t">방치형 육성</p>
+            <p class="d">바쁜 시간에도 조금씩 성장하는 구조.</p>
+          </div>
+          <div class="feat">
+            <p class="t">수집의 재미</p>
+            <p class="d">다양한 드래곤을 모으고 키워보세요.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="side">
+          <div class="media" aria-label="스크린샷 영역">
+            <div class="slider" id="slider"></div>
+
+            <div class="slider-nav" aria-label="스크린샷 넘기기">
+              <button class="nav-btn" id="prevBtn" type="button" aria-label="이전">‹</button>
+              <div class="dots" id="dots"></div>
+              <button class="nav-btn" id="nextBtn" type="button" aria-label="다음">›</button>
+            </div>
+
+            <div class="fallback" id="sliderFallback" style="display:none;">
+              <strong>스크린샷 파일을 못 찾았어요</strong><br />
+              레포에 <b>hero.jpg</b>, <b>tree5.png</b>, <b>tree6.png</b> 업로드하면 자동 표시됩니다.
+              <div class="hint">landing 레포 루트에 업로드</div>
+            </div>
+          </div>
+
+          <div class="mini">
+            <div class="stat">
+              <div class="k">추천 플레이</div>
+              <div class="v">하루 5분</div>
+            </div>
+            <div class="stat">
+              <div class="k">포인트</div>
+              <div class="v">성장·진화·수집</div>
+            </div>
+          </div>
+
+          <div class="fine">
+            <div>※ 과장/허위 문구는 광고 승인에 불리할 수 있어요.</div>
+            <div>※ UTM/gclid를 유지해 캠페인 성과 측정이 가능합니다.</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <div class="f">
+      <div>
+        © <span id="year"></span> Pixel Dragon
+        <span class="sep">·</span>
+        <a href="#" id="privacyLink">개인정보처리방침</a>
+      </div>
+      <div>
+        <a href="#" id="supportLink">고객센터</a>
+        <span class="sep">·</span>
+        <a href="#" id="playStoreLink">Google Play</a>
+        <span class="sep">·</span>
+        <a href="#" id="appStoreLink">App Store</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const CONFIG = {
+    appName: "픽셀 드래곤",
+    logoPath: "logo.png",
+    playStoreUrl: "https://play.google.com/store/apps/details?id=com.soo.pixeldragon",
+    appStoreUrl: "https://apps.apple.com/us/app/%ED%94%BD%EC%85%80-%EB%93%9C%EB%9E%98%EA%B3%A4-pixel-dragon/id6760347847",
+    privacyUrl: "https://kimsurse89-blip.github.io/pixeldragon-go/",
+    supportUrl: "https://kimsurse89-blip.github.io/pixeldragon-go/",
+    sliderImages: ["hero.jpg", "tree5.png", "tree6.png"],
+    sliderAutoplayMs: 2600
+  };
+
+  function buildUrlWithTracking(baseUrl) {
+    try {
+      const current = new URL(window.location.href);
+      const base = new URL(baseUrl);
+      const keepKeys = [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_term",
+        "utm_content",
+        "gclid",
+        "wbraid",
+        "gbraid"
+      ];
+      keepKeys.forEach(k => {
+        const v = current.searchParams.get(k);
+        if (v) base.searchParams.set(k, v);
+      });
+      return base.toString();
+    } catch {
+      return baseUrl;
+    }
+  }
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const googleUrl = buildUrlWithTracking(CONFIG.playStoreUrl);
+  const iosUrl = buildUrlWithTracking(CONFIG.appStoreUrl);
+
+  const ctaGooglePlay = document.getElementById("ctaGooglePlay");
+  const ctaAppStore = document.getElementById("ctaAppStore");
+  const playStoreLink = document.getElementById("playStoreLink");
+  const appStoreLink = document.getElementById("appStoreLink");
+
+  if (ctaGooglePlay) ctaGooglePlay.href = googleUrl;
+  if (ctaAppStore) ctaAppStore.href = iosUrl;
+  if (playStoreLink) playStoreLink.href = googleUrl;
+  if (appStoreLink) appStoreLink.href = iosUrl;
+
+  document.getElementById("privacyLink").href = CONFIG.privacyUrl;
+  document.getElementById("supportLink").href = CONFIG.supportUrl;
+
+  const moreBtn = document.getElementById("ctaMore");
+  const featuresEl = document.getElementById("features");
+  if (moreBtn && featuresEl) {
+    moreBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      featuresEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  const u = new URL(window.location.href);
+  const hasAds = !!(u.searchParams.get("gclid") || u.searchParams.get("wbraid") || u.searchParams.get("gbraid"));
+  const src = u.searchParams.get("utm_source") || (hasAds ? "Google Ads" : "직접 방문");
+  document.getElementById("sourcePill").textContent = src;
+
+  const slider = document.getElementById("slider");
+  const dotsWrap = document.getElementById("dots");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const fallback = document.getElementById("sliderFallback");
+
+  const imgs = (CONFIG.sliderImages || []).filter(Boolean);
+  let idx = 0;
+  let timer = null;
+  let doneCount = 0;
+  let okCount = 0;
+
+  function stopAutoplay(){
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  function startAutoplay(){
+    stopAutoplay();
+    if (!CONFIG.sliderAutoplayMs || CONFIG.sliderAutoplayMs <= 0) return;
+    timer = setInterval(() => setActive(idx + 1), CONFIG.sliderAutoplayMs);
+  }
+
+  function setActive(i){
+    if (imgs.length === 0) return;
+    idx = (i + imgs.length) % imgs.length;
+    document.querySelectorAll("#slider img").forEach((el, n) => {
+      el.classList.toggle("active", n === idx);
+    });
+    document.querySelectorAll("#dots .dot").forEach((el, n) => {
+      el.classList.toggle("active", n === idx);
+    });
+  }
+
+  function buildSlider(){
+    slider.innerHTML = "";
+    dotsWrap.innerHTML = "";
+
+    if (imgs.length === 0){
+      fallback.style.display = "block";
+      return;
+    }
+
+    imgs.forEach((src, i) => {
+      const img = document.createElement("img");
+      img.alt = `스크린샷 ${i + 1}`;
+      img.src = src;
+
+      img.addEventListener("load", () => {
+        doneCount++;
+        okCount++;
+        fallback.style.display = "none";
+      });
+
+      img.addEventListener("error", () => {
+        doneCount++;
+        if (doneCount >= imgs.length && okCount === 0) {
+          fallback.style.display = "block";
+        }
+      });
+
+      slider.appendChild(img);
+
+      const dot = document.createElement("button");
+      dot.className = "dot";
+      dot.type = "button";
+      dot.setAttribute("aria-label", `${i + 1}번 이미지`);
+      dot.addEventListener("click", () => {
+        setActive(i);
+        startAutoplay();
+      });
+      dotsWrap.appendChild(dot);
+    });
+
+    setActive(0);
+    startAutoplay();
+  }
+
+  prevBtn.addEventListener("click", () => {
+    setActive(idx - 1);
+    startAutoplay();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    setActive(idx + 1);
+    startAutoplay();
+  });
+
+  buildSlider();
+</script>
+</body>
+</html>
