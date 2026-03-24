@@ -261,8 +261,8 @@
 
     .media{
       aspect-ratio: 16 / 9;
-      min-height: 320px;
-      max-height: min(62svh, 720px);
+      min-height: 0;
+      max-height: none;
     }
 
     @media (max-width: 640px){
@@ -276,7 +276,8 @@
       }
 
       .media{
-        min-height: min(32vh, 360px);
+        aspect-ratio: 16 / 9;
+        min-height: 0;
         max-height:none;
       }
     }
@@ -599,8 +600,7 @@
       <section class="card" id="previewSection">
         <div class="panel">
           <p class="section-title">스크린샷 미리보기</p>
-          <p class="sub" style="margin:0; font-size:13px;">넓은 화면에서도 가로 분할 없이 세로형 흐름 그대로 보여줍니다.</p>
-          <div class="media" aria-label="스크린샷 영역">
+                    <div class="media" aria-label="스크린샷 영역">
             <div class="slider" id="slider"></div>
 
             <div class="slider-nav" aria-label="스크린샷 넘기기">
