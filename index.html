@@ -281,6 +281,13 @@
       }
     }
 
+    .video-box{
+      -webkit-user-select:none;
+      user-select:none;
+      -webkit-touch-callout:none;
+      touch-action:manipulation;
+    }
+
     .video-box .promo-layer{
       position:absolute;
       inset:0;
@@ -291,12 +298,37 @@
       background:#000;
       opacity:0;
       transition: opacity .7s ease;
-      pointer-events:none;
+      pointer-events:none !important;
+      -webkit-user-select:none;
+      user-select:none;
+      -webkit-touch-callout:none;
+      outline:none;
+      border:0;
+      -webkit-transform:translateZ(0);
+      transform:translateZ(0);
+    }
+
+    .video-box .promo-layer::-webkit-media-controls,
+    .video-box .promo-layer::-webkit-media-controls-enclosure,
+    .video-box .promo-layer::-webkit-media-controls-panel,
+    .video-box .promo-layer::-webkit-media-controls-play-button,
+    .video-box .promo-layer::-webkit-media-controls-start-playback-button,
+    .video-box .promo-layer::-webkit-media-controls-overlay-play-button,
+    .video-box .promo-layer::-webkit-media-controls-timeline,
+    .video-box .promo-layer::-webkit-media-controls-current-time-display,
+    .video-box .promo-layer::-webkit-media-controls-time-remaining-display,
+    .video-box .promo-layer::-webkit-media-controls-volume-slider,
+    .video-box .promo-layer::-webkit-media-controls-mute-button,
+    .video-box .promo-layer::-webkit-media-controls-fullscreen-button {
+      display:none !important;
+      -webkit-appearance:none;
+      opacity:0 !important;
+      pointer-events:none !important;
     }
 
     .video-box .promo-layer.active{
       opacity:1;
-      pointer-events:auto;
+      pointer-events:none !important;
       z-index:2;
     }
 
@@ -534,21 +566,31 @@
               id="promoVideoA"
               class="promo-layer active"
               playsinline
+              webkit-playsinline
               muted
               autoplay
-              controls
+              disablepictureinpicture
+              disableremoteplayback
+              x-webkit-airplay="deny"
+              tabindex="-1"
               preload="auto"
               poster="hero.jpg"
+              aria-hidden="true"
             ></video>
             <video
               id="promoVideoB"
               class="promo-layer preload"
               playsinline
+              webkit-playsinline
               muted
               autoplay
-              controls
+              disablepictureinpicture
+              disableremoteplayback
+              x-webkit-airplay="deny"
+              tabindex="-1"
               preload="auto"
               poster="hero.jpg"
+              aria-hidden="true"
             ></video>
           </div>
         </div>
@@ -738,15 +780,34 @@
 
       const onReady = () => {
         videoEl.currentTime = 0;
-        videoEl.play().then(() => done(resolve)).catch(() => done(resolve));
+        videoEl.blur();
+        videoEl.play().then(() => {
+          videoEl.blur();
+          done(resolve);
+        }).catch(() => done(resolve));
       };
 
       const onError = () => done(() => reject(new Error(`failed to load ${src}`)));
 
       videoEl.loop = true;
+      videoEl.controls = false;
       videoEl.muted = true;
+      videoEl.defaultMuted = true;
       videoEl.playsInline = true;
       videoEl.autoplay = true;
+      videoEl.disablePictureInPicture = true;
+      videoEl.disableRemotePlayback = true;
+      videoEl.setAttribute("playsinline", "");
+      videoEl.setAttribute("webkit-playsinline", "");
+      videoEl.setAttribute("muted", "");
+      videoEl.setAttribute("autoplay", "");
+      videoEl.setAttribute("disablepictureinpicture", "");
+      videoEl.setAttribute("disableremoteplayback", "");
+      videoEl.setAttribute("x-webkit-airplay", "deny");
+      videoEl.setAttribute("tabindex", "-1");
+      videoEl.setAttribute("aria-hidden", "true");
+      videoEl.setAttribute("controlslist", "nodownload noremoteplayback nofullscreen");
+      videoEl.removeAttribute("controls");
       videoEl.preload = "auto";
       videoEl.src = src;
 
@@ -767,8 +828,6 @@
     hiddenPromo.classList.remove("active");
     hiddenPromo.classList.add("preload");
     activePromo.classList.remove("preload");
-    activePromo.controls = true;
-    hiddenPromo.controls = false;
   }
 
   async function initPromoVideos() {
@@ -794,17 +853,24 @@
 
       hiddenPromo.classList.add("active");
       hiddenPromo.classList.remove("preload");
-      hiddenPromo.controls = true;
+      hiddenPromo.classList.add("active");
+      hiddenPromo.classList.remove("preload");
 
       activePromo.classList.remove("active");
       activePromo.classList.add("preload");
-      activePromo.controls = false;
 
       const previousActive = activePromo;
       activePromo = hiddenPromo;
       hiddenPromo = previousActive;
       videoIdx = normalizedIndex;
       syncVideoUi();
+
+      setTimeout(() => {
+        try {
+          hiddenPromo.pause();
+          hiddenPromo.blur();
+        } catch {}
+      }, 900);
     } catch {
       // Keep the current video visible if the next file fails to load.
     }
@@ -916,4 +982,3 @@
 </script>
 </body>
 </html>
-
