@@ -25,7 +25,7 @@
       --ring: rgba(96,165,250,.35);
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius: 20px;
-      --max: 560px;
+      --max: 1180px;
       --pad: 18px;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
     }
@@ -111,6 +111,33 @@
       gap:16px;
       grid-template-columns: 1fr;
       align-items:start;
+    }
+
+    @media (min-width: 980px){
+      .container{
+        grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
+        align-items:start;
+      }
+
+      .container > .card:nth-child(1){
+        grid-column:1;
+        grid-row:1;
+      }
+
+      .container > .card:nth-child(2){
+        grid-column:2;
+        grid-row:1;
+      }
+
+      .container > .card:nth-child(3){
+        grid-column:2;
+        grid-row:2;
+      }
+
+      .container > .card:nth-child(4){
+        grid-column:1;
+        grid-row:2;
+      }
     }
 
     .card{
@@ -254,7 +281,7 @@
 
     .video-box{
       aspect-ratio: 9 / 16;
-      max-height: 860px;
+      max-height: 780px;
       min-height: 560px;
     }
 
@@ -466,7 +493,7 @@
           <h1>픽셀 드래곤<br>: PIXEL DRAGON</h1>
           <p class="sub">
             짧게 접속해도 성장하는 드래곤.<br>
-            수집, 성장, 진화의 순간을 세로형 페이지에서 더 편하게 살펴볼 수 있습니다.
+            수집, 성장, 진화의 순간을 더 보기 편한 화면으로 살펴보세요.
           </p>
 
           <div class="cta-row">
