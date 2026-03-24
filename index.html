@@ -520,7 +520,6 @@
               playsinline
               muted
               autoplay
-              loop
               controls
               preload="auto"
               poster="hero.jpg"
@@ -616,7 +615,8 @@
     appStoreUrl: "https://apps.apple.com/us/app/%ED%94%BD%EC%85%80-%EB%93%9C%EB%9E%98%EA%B3%A4-pixel-dragon/id6760347847",
     privacyUrl: "https://kimsurse89-blip.github.io/pixeldragon-go/",
     supportUrl: "https://kimsurse89-blip.github.io/pixeldragon-go/",
-    videoFile: "promo.mp4",
+    videoFiles: ["promo.mp4", "promo2.mp4", "promo3.mp4"],
+    videoRotateMs: 10000,
     sliderImages: ["hero.jpg", "tree5.png", "tree6.png", "tree7.png"],
     sliderAutoplayMs: 2600
   };
@@ -679,21 +679,53 @@
 
   const videoSection = document.getElementById("videoSection");
   const promoVideo = document.getElementById("promoVideo");
+  const videoFiles = (CONFIG.videoFiles || []).filter(Boolean);
+  let videoIdx = 0;
+  let videoTimer = null;
+
+  function stopVideoRotation() {
+    if (videoTimer) {
+      clearInterval(videoTimer);
+      videoTimer = null;
+    }
+  }
+
+  function setPromoVideo(i) {
+    if (!promoVideo || videoFiles.length === 0) return;
+
+    videoIdx = (i + videoFiles.length) % videoFiles.length;
+
+    const sourceEl = promoVideo.querySelector("source");
+    if (!sourceEl) return;
+
+    sourceEl.src = videoFiles[videoIdx];
+    promoVideo.load();
+    promoVideo.play().catch(() => {});
+  }
+
+  function startVideoRotation() {
+    stopVideoRotation();
+
+    if (!promoVideo || videoFiles.length <= 1 || !CONFIG.videoRotateMs || CONFIG.videoRotateMs <= 0) return;
+
+    videoTimer = setInterval(() => {
+      setPromoVideo(videoIdx + 1);
+    }, CONFIG.videoRotateMs);
+  }
 
   if (promoVideo) {
     promoVideo.addEventListener("error", () => {
       if (videoSection) videoSection.style.display = "none";
     });
 
-    const sourceEl = promoVideo.querySelector("source");
-    if (sourceEl && CONFIG.videoFile) {
-      sourceEl.src = CONFIG.videoFile;
-      promoVideo.load();
-    }
-
     promoVideo.addEventListener("loadedmetadata", () => {
       promoVideo.play().catch(() => {});
     });
+
+    if (videoFiles.length > 0) {
+      setPromoVideo(0);
+      startVideoRotation();
+    }
   }
 
   const slider = document.getElementById("slider");
@@ -790,3 +822,4 @@
 </script>
 </body>
 </html>
+
