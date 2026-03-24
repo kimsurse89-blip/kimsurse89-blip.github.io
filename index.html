@@ -195,6 +195,15 @@
       border-color: rgba(255,255,255,.26);
       box-shadow: 0 0 0 6px rgba(74,222,128,.22);
     }
+    .btn.apple{
+      background: linear-gradient(135deg, rgba(255,99,132,.96), rgba(239,68,68,.96));
+      color:#fff;
+      border-color: rgba(255,255,255,.18);
+    }
+    .btn.apple:hover{
+      border-color: rgba(255,255,255,.26);
+      box-shadow: 0 0 0 6px rgba(239,68,68,.22);
+    }
     .btn .small{
       font-size:12px;
       font-weight:700;
@@ -214,6 +223,36 @@
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(11,15,23,.25);
+    }
+
+    .video-wrap{
+      padding: 0 22px 18px;
+    }
+    .video-card{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(11,15,23,.25);
+      padding: 14px;
+    }
+    .video-title{
+      margin:0 0 10px;
+      font-size:14px;
+      font-weight:900;
+    }
+    .video-box{
+      position:relative;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:#05070b;
+      aspect-ratio: 16 / 9;
+    }
+    .video-box video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      background:#000;
     }
 
     .features{
@@ -369,12 +408,6 @@
       font-size:16px;
       letter-spacing:-.2px;
     }
-    .fine{
-      color: var(--muted);
-      font-size: 12px;
-      line-height:1.5;
-      padding-top: 8px;
-    }
 
     footer{
       padding: 16px var(--pad) 22px;
@@ -432,7 +465,7 @@
               <span class="small">Google Play</span>
             </a>
 
-            <a class="btn" id="ctaAppStore" href="#" rel="nofollow noopener">
+            <a class="btn apple" id="ctaAppStore" href="#" rel="nofollow noopener">
               <span>iPhone 설치</span>
               <span class="small">App Store</span>
             </a>
@@ -448,6 +481,24 @@
             <span class="badge">✅ 꾸준한 성장</span>
             <span class="badge">✅ 레트로 도트</span>
             <span class="badge">✅ 무료로 시작</span>
+          </div>
+        </div>
+
+        <div class="video-wrap" id="videoSection">
+          <div class="video-card">
+            <p class="video-title">플레이 영상</p>
+            <div class="video-box">
+              <video
+                id="promoVideo"
+                controls
+                playsinline
+                muted
+                preload="metadata"
+                poster="hero.jpg"
+              >
+                <source src="promo.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
         </div>
 
@@ -484,7 +535,7 @@
 
             <div class="fallback" id="sliderFallback" style="display:none;">
               <strong>스크린샷 파일을 못 찾았어요</strong><br />
-              레포에 <b>hero.jpg</b>, <b>tree5.png</b>, <b>tree6.png</b> 업로드하면 자동 표시됩니다.
+              레포에 <b>hero.jpg</b>, <b>tree5.png</b>, <b>tree6.png</b>, <b>tree7.png</b> 업로드하면 자동 표시됩니다.
               <div class="hint">landing 레포 루트에 업로드</div>
             </div>
           </div>
@@ -498,11 +549,6 @@
               <div class="k">포인트</div>
               <div class="v">성장·진화·수집</div>
             </div>
-          </div>
-
-          <div class="fine">
-            <div>※ 과장/허위 문구는 광고 승인에 불리할 수 있어요.</div>
-            <div>※ UTM/gclid를 유지해 캠페인 성과 측정이 가능합니다.</div>
           </div>
         </div>
       </aside>
@@ -535,7 +581,8 @@
     appStoreUrl: "https://apps.apple.com/us/app/%ED%94%BD%EC%85%80-%EB%93%9C%EB%9E%98%EA%B3%A4-pixel-dragon/id6760347847",
     privacyUrl: "https://kimsurse89-blip.github.io/pixeldragon-go/",
     supportUrl: "https://kimsurse89-blip.github.io/pixeldragon-go/",
-    sliderImages: ["hero.jpg", "tree5.png", "tree6.png"],
+    videoFile: "promo.mp4",
+    sliderImages: ["hero.jpg", "tree5.png", "tree6.png", "tree7.png"],
     sliderAutoplayMs: 2600
   };
 
@@ -594,6 +641,19 @@
   const hasAds = !!(u.searchParams.get("gclid") || u.searchParams.get("wbraid") || u.searchParams.get("gbraid"));
   const src = u.searchParams.get("utm_source") || (hasAds ? "Google Ads" : "직접 방문");
   document.getElementById("sourcePill").textContent = src;
+
+  const videoSection = document.getElementById("videoSection");
+  const promoVideo = document.getElementById("promoVideo");
+  if (promoVideo) {
+    promoVideo.addEventListener("error", () => {
+      if (videoSection) videoSection.style.display = "none";
+    });
+    const sourceEl = promoVideo.querySelector("source");
+    if (sourceEl && CONFIG.videoFile) {
+      sourceEl.src = CONFIG.videoFile;
+      promoVideo.load();
+    }
+  }
 
   const slider = document.getElementById("slider");
   const dotsWrap = document.getElementById("dots");
