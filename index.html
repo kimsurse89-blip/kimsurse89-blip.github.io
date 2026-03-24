@@ -247,18 +247,30 @@
       overflow:hidden;
       border:1px solid rgba(255,255,255,.12);
       background:#05070b;
-      aspect-ratio: 9 / 16;
-      max-height: 860px;
-      min-height: 560px;
       display:flex;
       align-items:center;
       justify-content:center;
     }
 
+    .video-box{
+      aspect-ratio: 9 / 16;
+      max-height: 860px;
+      min-height: 560px;
+    }
+
+    .media{
+      aspect-ratio: 16 / 9;
+      min-height: 260px;
+      max-height: 420px;
+    }
+
     @media (max-width: 640px){
-      .video-box,
-      .media{
+      .video-box{
         min-height: min(74vh, 720px);
+      }
+
+      .media{
+        min-height: 220px;
       }
     }
 
@@ -454,7 +466,7 @@
           <h1>픽셀 드래곤<br>: PIXEL DRAGON</h1>
           <p class="sub">
             짧게 접속해도 성장하는 드래곤.<br>
-            수집, 성장, 진화의 순간을 세로형 화면으로 더 크게 보여줍니다.
+            수집, 성장, 진화의 순간을 세로형 페이지에서 더 편하게 살펴볼 수 있습니다.
           </p>
 
           <div class="cta-row">
@@ -477,7 +489,7 @@
             <a class="btn" id="ctaMore" href="#previewSection">
               <span class="btn-label">
                 <span>더 알아보기</span>
-                <span class="small">세로 미리보기 보기</span>
+                <span class="small">미리보기 보기</span>
               </span>
               <span>↓</span>
             </a>
@@ -514,7 +526,7 @@
 
       <section class="card" id="previewSection">
         <div class="panel">
-          <p class="section-title">세로 미리보기</p>
+          <p class="section-title">스크린샷 미리보기</p>
           <div class="media" aria-label="스크린샷 영역">
             <div class="slider" id="slider"></div>
 
